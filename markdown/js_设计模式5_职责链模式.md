@@ -84,6 +84,21 @@ chainOrder500.setNext(chainOrder200);
 chainOrder200.setNext(chainOrderNormal);
 
 chainOrder500.passRequset([type], [pay], [stock]);
-
 // 这样就可以实现灵活增加节点顺序。
+```
+### 用AOP实现职责链
+```javascript
+Function.prototype.after = function(fn) {
+    var self = this;
+    return function() {
+        var ret = self.apply(this, arguments);
+        if ( ret === 'next') {
+            return fn.apply(this, arguments)
+        }
+        return ret;
+    }
+}
+
+var order = chainOrder500.after(chainOrder200).after(chainOrderNormal);
+// 这样的实现会更加简练
 ```
