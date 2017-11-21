@@ -25,8 +25,10 @@ function order(type, pay, stock) {
     }
 }
 // 很可能写出这样的代码
+```
 
-// 稍微优化一下可能就是这个样子
+### 稍微优化一下可能就是这个样子
+```javascript
 function order500(type, pay, stock) {
     if (type === 0 && pay === true) {
         log('100 coupon')；
@@ -44,9 +46,11 @@ function orderNormal(type, pay, stock) {
 }
 
 // 这样逻辑上清晰了很多，但是职责链很僵硬，传递请求耦合爱一起。下面用职责链重构代码。
+```
 
-// 首先保证几个处理函数要相互独立，所以我们约定如果函数不满足条件久就返回‘next’，交给下一个函数处理。这样我们只要定义个函数链就可以解决问题。
+### 首先保证几个处理函数要相互独立，所以我们约定如果函数不满足条件久就返回‘next’，交给下一个函数处理。这样我们只要定义个函数链就可以解决问题。
 
+```javascript
 function order500(type, pay, stock) {
     if (type === 0 && pay === true) {
         log('100 coupon')；
@@ -86,6 +90,7 @@ chainOrder200.setNext(chainOrderNormal);
 chainOrder500.passRequset([type], [pay], [stock]);
 // 这样就可以实现灵活增加节点顺序。
 ```
+
 ### 用AOP实现职责链
 ```javascript
 Function.prototype.after = function(fn) {
