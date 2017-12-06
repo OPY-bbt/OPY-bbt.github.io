@@ -2,7 +2,7 @@
 
 [source](https://www.codementor.io/drewpowers/high-performance-webpack-config-for-front-end-delivery-90sqic1qa#comments-90sqic1qa)
 
-## Scope Hoisting.  
+## Scope Hoisting.
 ---
 过去 webpack 打包时的一个取舍是将 bundle 中各个模块单独打包成闭包。这些打包函数使你的 JavaScript 在浏览器中处理的更慢。相比之下，一些工具像 Closure Compiler 和 RollupJS 可以提升(hoist)或者预编译所有模块到一个闭包中，提升你的代码在浏览器中的执行速度。
 
@@ -82,46 +82,46 @@ const Countdown = () => (<Async load={import('./views/countdown')} />);
 增加hash方便缓存。下面这种增加hash的方式，只有当文件改变了hash值才会变。这种就避免了用户不必要的下载。      
 - <font color="#FF1493">yarn add chunk-manifest-webpack-plugin webpack-chunk-hash</font>
 - update config.js
-    ```js
-    const webpack = require('webpack');
-    const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
-    const WebpackChunkHash = require('webpack-chunk-hash');
-    const HtmlWebpackPlugin = require('html-webpack-plugin');
+```js
+const webpack = require('webpack');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-    /* Shared Dev & Production */
+/* Shared Dev & Production */
 
-    const config = {
-    /* … our webpack config up until now */
+const config = {
+/* … our webpack config up until now */
 
-    plugins: [
-        // /* other plugins here */
-        // 
-        // /* Uncomment to enable automatic HTML generation */
-        // new HtmlWebpackPlugin({
-        //   inlineManifestWebpackName: 'webpackManifest',
-        //   template: require('html-webpack-template'),
-        // }),
-    ],
-    };
+plugins: [
+    // /* other plugins here */
+    // 
+    // /* Uncomment to enable automatic HTML generation */
+    // new HtmlWebpackPlugin({
+    //   inlineManifestWebpackName: 'webpackManifest',
+    //   template: require('html-webpack-template'),
+    // }),
+],
+};
 
-    /* Production */
+/* Production */
 
-    if (process.env.NODE_ENV === 'production') {
-    config.output.filename = '[name].[chunkhash].js';
-    config.plugins = [
-        ...config.plugins, // ES6 array destructuring, available in Node 5+
-        new webpack.HashedModuleIdsPlugin(),
-        new WebpackChunkHash(),
-        new ChunkManifestPlugin({
-        filename: 'chunk-manifest.json',
-        manifestVariable: 'webpackManifest',
-        inlineManifest: true,
-        }),
-    ];
-    }
+if (process.env.NODE_ENV === 'production') {
+config.output.filename = '[name].[chunkhash].js';
+config.plugins = [
+    ...config.plugins, // ES6 array destructuring, available in Node 5+
+    new webpack.HashedModuleIdsPlugin(),
+    new WebpackChunkHash(),
+    new ChunkManifestPlugin({
+    filename: 'chunk-manifest.json',
+    manifestVariable: 'webpackManifest',
+    inlineManifest: true,
+    }),
+];
+}
 
-    module.exports = config;
-    ````
+module.exports = config;
+````
 
 ## CommonsChunkPlugin for Vendor Caching
 ---
