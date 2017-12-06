@@ -16,10 +16,10 @@ module.exports = {
 ```
 --display-optimization-bailout 将显示绑定失败的原因。
 
-## Minification and Uglification.
+## Minification and Uglification.
 ---
 
-这个应该都会用吧. 去掉空格，换行，注释及一些不必要在生产环境中的东东。
+这个应该都会用吧. 去掉空格，换行，注释及一些不必要在生产环境中的东东。
 ```javascript
     webpack -p // -p is short for "production"
 ```
@@ -27,8 +27,8 @@ module.exports = {
 ```javascript
     NODE_ENV=production PLATFORM=web webpack -p
 ```
-还有一些第三方库在生产环境中会去掉一些在开发或测试环境中才能用到的功能，使其提升性能和减少体积.     
-一般来说 ***-p*** 已经够用了， 如果还想再进一步减少体积的话可以使用 ***webpack.optimize.UglifyJsPlugin***.
+还有一些第三方库在生产环境中会去掉一些在开发或测试环境中才能用到的功能，使其提升性能和减少体积.     
+一般来说 ***-p*** 已经够用了， 如果还想再进一步减少体积的话可以使用 ***webpack.optimize.UglifyJsPlugin***.
 
 ## Dynamic Imports for Lazy-loaded Modules.
 --- 
@@ -126,7 +126,7 @@ module.exports = config;
 ## CommonsChunkPlugin for Vendor Caching
 ---
 
-将第三依赖打包到vendor.js里，这样你升级时，这些第三方依赖就不会重新下载.使用 **CommonsChunkPlugin**
+将第三依赖打包到vendor.js里，这样你升级时，这些第三方依赖就不会重新下载.使用 **CommonsChunkPlugin**
 ```javascript
 const webpack = require('webpack');
 entry: {
@@ -173,6 +173,3 @@ how to use:
 node_module/.bin/webpack --profile --json > stats.json
 ```
 ### 原本提到了关于优化moment打包大小的问题，[solution](https://github.com/webpack/webpack/issues/3128#issuecomment-311418452), 这里提一下如果你使用 [roadhog](https://github.com/sorrycc/roadhog) 脚手架的话，在 `.roadhogrc.js`中加上 `"ignoreMomentLocale": true` 就可以实现(隐藏func).
-
-
-
