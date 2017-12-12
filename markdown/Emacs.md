@@ -26,6 +26,12 @@
 - C-k 删除光标到行尾之间
 - M-d 删除光标到句尾之间
 
+## 撤销
+- C-y 撤销 C-k 删除的行 but 我感觉更像粘贴
+- M-y 可以看到 C-y 保存记录
+- C-/, C-_ 撤销
+- M-_ redo
+
 ## 屏幕操作
 - M-v or Esc v 跳到上一屏 
 - C-v (view) 跳到下一屏
@@ -47,3 +53,24 @@
 - C-g 用于终端取消或中断之前的指令
 - C-u [number] [command] prefix argument 重复number次commond
   - C-u 8 * 输入8次*
+
+## buffer 类似于便签页
+- C-x C-b list buffers
+- C-x b swtich buffer quickly
+- C-x s save some buffers
+
+## quit
+- C-x C-c 退出并且保存
+
+## auto save
+- when computer crashed, emacs auto save file which you editing, the temporary file name is start with # and end with #;
+
+## switch major mode
+- M-x i.e. M-x text-mode
+
+## search
+- C-s forward search
+- C-r backward search
+
+## window
+- C-x o (other) move cursor to other window
