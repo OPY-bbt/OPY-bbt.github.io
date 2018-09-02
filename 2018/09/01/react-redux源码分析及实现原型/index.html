@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="源码," />
 
 
 
@@ -95,6 +95,7 @@
 
 
 <meta name="description" content="redux作为大型应用的状态管理工具，如果想配合react使用，需要借助react-redux。redux主要完成两件事情：  负责应用的状态管理，保证单向数据流 当应用状态发生变化，触发监听器。  那么，如果想要将react和redux搭配使用，就需要react组件可以根据redux中所存储的状态（store）更新view。并且可以改变store。其实react-redux主要就是完成了这两件事">
+<meta name="keywords" content="源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="react-redux源码分析及实现原型">
 <meta property="og:url" content="http://yoursite.com/2018/09/01/react-redux源码分析及实现原型/index.html">
@@ -102,7 +103,7 @@
 <meta property="og:description" content="redux作为大型应用的状态管理工具，如果想配合react使用，需要借助react-redux。redux主要完成两件事情：  负责应用的状态管理，保证单向数据流 当应用状态发生变化，触发监听器。  那么，如果想要将react和redux搭配使用，就需要react组件可以根据redux中所存储的状态（store）更新view。并且可以改变store。其实react-redux主要就是完成了这两件事">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://static.dongtu.com/netpic/20161213133159LNLFQ4LP5JEVP0CB_m.webp">
-<meta property="og:updated_time" content="2018-09-02T03:32:11.182Z">
+<meta property="og:updated_time" content="2018-09-02T04:19:18.274Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react-redux源码分析及实现原型">
 <meta name="twitter:description" content="redux作为大型应用的状态管理工具，如果想配合react使用，需要借助react-redux。redux主要完成两件事情：  负责应用的状态管理，保证单向数据流 当应用状态发生变化，触发监听器。  那么，如果想要将react和redux搭配使用，就需要react组件可以根据redux中所存储的状态（store）更新view。并且可以改变store。其实react-redux主要就是完成了这两件事">
@@ -379,6 +380,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/源码/" rel="tag"># 源码</a>
+          
+        </div>
+      
 
       
       
@@ -397,6 +404,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/02/react-redux源码分析及实现原型-下/" rel="prev" title="react-redux源码分析及实现原型_下">
+                react-redux源码分析及实现原型_下 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -473,7 +484,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -481,6 +492,15 @@
 
           
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
           
 
         </nav>
