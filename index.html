@@ -264,6 +264,140 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2020/07/13/回溯算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="山石岩">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前路漫漫 唯风作伴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/13/回溯算法/" itemprop="url">算法思想-回溯</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-13T21:44:13+08:00">
+                2020-07-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/07/13/回溯算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/07/13/回溯算法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><code>笼统地讲，回溯算法很多时候都应用在“搜索”这类问题上。不过这里说的搜索，并不是狭义的指我们前面讲过的图的搜索算法，而是在一组可能的解中，搜索满足期望的解。回溯的处理思想，有点类似枚举搜索。我们枚举所有的解，找到满足期望的解。</code></p>
+<h3 id="八皇后问题"><a href="#八皇后问题" class="headerlink" title="八皇后问题"></a>八皇后问题</h3><p>在8*8的棋盘上放置8个棋子，并且保证行列，左右对角线上都没有棋子。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> result = [];</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cal8queens</span>(<span class="params">row</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (row === <span class="number">8</span>) &#123;</span><br><span class="line">        printQueens(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> column = <span class="number">0</span>; column &lt; <span class="number">8</span>; column++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isOk(row, column)) &#123;</span><br><span class="line">            result[row] = column;</span><br><span class="line">            cal8queens(row + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isOk</span>(<span class="params">row, column</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> leftup = column - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> rightup = column + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">if</span> (result[i] === column) <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">// 同一列有值，失败</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (leftup &gt;= <span class="number">0</span>) &#123; <span class="comment">// 左对角线有值，失败</span></span><br><span class="line">            <span class="keyword">if</span> (result[i] == leftup) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (rightup &lt; <span class="number">8</span>) &#123; <span class="comment">//  右对角线有值，失败</span></span><br><span class="line">            <span class="keyword">if</span> (result[i] == rightup) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        leftup--;</span><br><span class="line">        rightup++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">printQueens</span>(<span class="params">result</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> row = <span class="number">0</span>; row &lt; <span class="number">8</span>; row++) &#123;</span><br><span class="line">        <span class="keyword">let</span> s = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> column = <span class="number">0</span>; column &lt; <span class="number">8</span>; column++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (result[row] === column) s += <span class="string">"Q "</span>;</span><br><span class="line">            <span class="keyword">else</span> s += <span class="string">"* "</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">console</span>.log(s + <span class="string">"\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"-----------\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line">cal8queens(<span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<h3 id="0-1背包"><a href="#0-1背包" class="headerlink" title="0-1背包"></a>0-1背包</h3><p>我们有一个背包，背包总的承载重量是 Wkg。现在我们有 n 个物品，每个物品的重量不等，并且不可分割。我们现在期望选择几件物品，装载到背包中。在不超过背包所能装载重量的前提下，如何让背包中物品的总重量最大？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> maxW = <span class="number">0</span>; <span class="comment">// 存储背包中物品总质量的最大值</span></span><br><span class="line"><span class="comment">// i表示考察到哪个物品了；</span></span><br><span class="line"><span class="comment">// cw 表示当前已经装进去的物品的重量和；</span></span><br><span class="line"><span class="comment">// items 物品重量</span></span><br><span class="line"><span class="comment">// n 物品数量；</span></span><br><span class="line"><span class="comment">// w 背包重量</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">i, cw, items, n, w</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (cw == w || i == n) &#123; <span class="comment">// 装满了或者考察完所有物品</span></span><br><span class="line">        <span class="keyword">if</span> (cw &gt; maxW) maxW = cw;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 对于第i个物品，会有装或者不装两种情况</span></span><br><span class="line">    <span class="comment">// 不装第i个物品</span></span><br><span class="line">    f(i+<span class="number">1</span>, cw, items, n, w);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 装第i个物品</span></span><br><span class="line">    <span class="keyword">if</span> (cw + items[i] &lt;= w) &#123;</span><br><span class="line">        f(i + <span class="number">1</span>, cw + items[i], items, n, w);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h3><p>假设正则表达式中只包含“<em>”和“?”这两种通配符，并且对这两个通配符的语义稍微做些改变，其中，“</em>”匹配任意多个（大于等于 0 个）任意字符，“?”匹配零个或者一个任意字符。基于以上背景假设，我们看下，如何用回溯算法，判断一个给定的文本，能否跟给定的正则表达式匹配？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ti 第i个text字符</span></span><br><span class="line"><span class="comment">// pj 第i个正则字符</span></span><br><span class="line"><span class="comment">// text 文本</span></span><br><span class="line"><span class="comment">// tlen 文本长度</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> matched = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">const</span> pattern = <span class="string">""</span>; <span class="comment">// 正则</span></span><br><span class="line"><span class="keyword">const</span> plen = pattern.length;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">match</span>(<span class="params">ti, pj, text, tlen</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(matched) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pj == plen) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ti === tlen) matched = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pattern[pj] === <span class="string">"*"</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> k = <span class="number">0</span>; k &lt;= tlen - ti; k ++) &#123;</span><br><span class="line">            match(ti + k, pj + <span class="number">1</span>, text, tlen);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pattern[pj] === <span class="string">"?"</span>) &#123;</span><br><span class="line">        <span class="comment">// 匹配0个字符</span></span><br><span class="line">        match(ti, pj+<span class="number">1</span>, text, tlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 匹配1个字符</span></span><br><span class="line">        match(ti + <span class="number">1</span>, pj + <span class="number">1</span>, text, tlen);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ti &lt; tlen &amp;&amp; pattern[pj] == text[ti]) &#123;</span><br><span class="line">        match(ti + <span class="number">1</span>, pj + <span class="number">1</span>, text, tlen);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>回溯算法的思想非常简单，大部分情况下，都是用来解决广义的搜索问题，也就是，从一组可能的解中，选择出一个满足要求的解。回溯算法非常适合用递归来实现，</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2020/06/13/从测试看react源码-scheduler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -517,9 +651,9 @@
           
             <p>这是一篇讲react Fiber算法的文章，深入浅出，并且作者自己实现了Fiber的核心代码，可以很好的帮助我们理解fiber<br><a href="https://engineering.hexacta.com/didact-fiber-incremental-reconciliation-b2fe028dcaec" target="_blank" rel="noopener">原文链接</a></p>
 <p>另外，建议读这篇文章之前先看一下他的另外几篇关于react的文章，本篇是建立在其之上的<br><a href="https://engineering.hexacta.com/didact-learning-how-react-works-by-building-it-from-scratch-51007984e5c5" target="_blank" rel="noopener">DIY React</a></p>
-<h2 id="Didact-Fiber-Incremental-reconciliation"><a href="#Didact-Fiber-Incremental-reconciliation" class="headerlink" title="Didact Fiber: Incremental reconciliation"></a>Didact Fiber: Incremental reconciliation</h2><p><a href="https://github.com/pomber/didact" target="_blank" rel="noopener">github repository</a><br><a href="https://codepen.io/pomber/pen/veVOdd" target="_blank" rel="noopener">updated demo</a></p>
+<h2 id="Didact-Fiber-Incremental-reconciliation"><a href="#Didact-Fiber-Incremental-reconciliation" class="headerlink" title="Didact Fiber: Incremental reconciliation"></a>Didact Fiber: Incremental reconciliation</h2><p><a href="https://github.com/pomber/didact">github repository</a><br><a href="https://codepen.io/pomber/pen/veVOdd" target="_blank" rel="noopener">updated demo</a></p>
 <h3 id="Why-Fiber"><a href="#Why-Fiber" class="headerlink" title="Why Fiber"></a>Why Fiber</h3><blockquote>
-<p>本文并不会展示一个完整的React Fiber,如果你想了解更多，<a href="https://github.com/koba04/react-fiber-resources" target="_blank" rel="noopener">更多资料</a></p>
+<p>本文并不会展示一个完整的React Fiber,如果你想了解更多，<a href="https://github.com/koba04/react-fiber-resources">更多资料</a></p>
 </blockquote>
 <p>当浏览器的主线程长时间忙于运行一些事情时，关键任务的执行可以能被推迟。</p>
 <p>为了展示这个问题，我做了一个<a href="https://pomber.github.io/incremental-rendering-demo/react-sync.html" target="_blank" rel="noopener">demo</a>，为了使星球一直转动，主线程需要每16ms被调用一次，因为animation是跑在主线程上的。如果主线程被其他事情占用，假如占用了200ms，你会发现animation会发生卡顿，星球停止运行，直到主线程空闲出来运行animation。</p>
@@ -1704,143 +1838,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2018/09/02/react-redux源码分析及实现原型-下/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="山石岩">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前路漫漫 唯风作伴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/02/react-redux源码分析及实现原型-下/" itemprop="url">react-redux源码分析及实现原型_下</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T12:21:55+08:00">
-                2018-09-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/09/02/react-redux源码分析及实现原型-下/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/09/02/react-redux源码分析及实现原型-下/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>上一次我们讲解了Provider、connect、selectorFactory。这次主要分析 connectAdvanced 这个核心API。</p>
-<h3 id="connectAdvanced"><a href="#connectAdvanced" class="headerlink" title="connectAdvanced"></a>connectAdvanced</h3><p>在开始之前我们先来看一个工具函数<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeSelectorStateful</span>(<span class="params">sourceSelector, store</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> selector = &#123;</span><br><span class="line">    run: <span class="function"><span class="keyword">function</span> <span class="title">runComponentSelector</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> nextProps = sourceSelector(store.getState(), props)</span><br><span class="line">        <span class="keyword">if</span> (nextProps !== selector.props || selector.error) &#123;</span><br><span class="line">          selector.shouldComponentUpdate = <span class="literal">true</span></span><br><span class="line">          selector.props = nextProps</span><br><span class="line">          selector.error = <span class="literal">null</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        selector.shouldComponentUpdate = <span class="literal">true</span></span><br><span class="line">        selector.error = error</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> selector</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>上篇讲过 selector 会将新的值和缓存的值做比较，如果变化，将重新求值并返回，如果没变化，返回缓存的旧值。makeSelectorStateful 函数是对 selector 的封装。正如其名字一样，使selector stateful</p>
-<p>再介绍一下<code>hoist-non-react-statics</code>这个库，作用是避免在使用HOC时，导致类的static方法丢失的问题。详情见<a href="https://reactjs.org/docs/higher-order-components.html#static-methods-must-be-copied-over" target="_blank" rel="noopener">react doc</a></p>
-<p><code>Subscription</code>是实现react与redux绑定的类，在接下来会用到我们先来看一下<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">Subscription</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(store, parentSub, onStateChange) &#123;</span><br><span class="line">    <span class="keyword">this</span>.store = store</span><br><span class="line">    <span class="keyword">this</span>.parentSub = parentSub</span><br><span class="line">    <span class="keyword">this</span>.onStateChange = onStateChange</span><br><span class="line">    <span class="keyword">this</span>.unsubscribe = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">this</span>.listeners = nullListeners</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  addNestedSub(listener) &#123;</span><br><span class="line">    <span class="keyword">this</span>.trySubscribe()</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.listeners.subscribe(listener)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyNestedSubs() &#123;</span><br><span class="line">    <span class="keyword">this</span>.listeners.notify()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  isSubscribed() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Boolean</span>(<span class="keyword">this</span>.unsubscribe)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  trySubscribe() &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.unsubscribe) &#123;</span><br><span class="line">      <span class="keyword">this</span>.unsubscribe = <span class="keyword">this</span>.parentSub</span><br><span class="line">        ? <span class="keyword">this</span>.parentSub.addNestedSub(<span class="keyword">this</span>.onStateChange)</span><br><span class="line">        : <span class="keyword">this</span>.store.subscribe(<span class="keyword">this</span>.onStateChange)</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">this</span>.listeners = createListenerCollection()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  tryUnsubscribe() &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.unsubscribe) &#123;</span><br><span class="line">      <span class="keyword">this</span>.unsubscribe()</span><br><span class="line">      <span class="keyword">this</span>.unsubscribe = <span class="literal">null</span></span><br><span class="line">      <span class="keyword">this</span>.listeners.clear()</span><br><span class="line">      <span class="keyword">this</span>.listeners = nullListeners</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>重点在 trySubscribe 方法，如果 parentSub 存在就将回调函数绑定在父组件上，否则绑定在store.subscribe中<br>原因是这样可以保证组件的更新顺序，从父到子。</p>
-<p>然后可以开始 <code>connectAdvanced</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">connectAdvanced</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  selectorFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">  &#123;</span></span></span><br><span class="line"><span class="function"><span class="params">    shouldHandleStateChanges = true,</span></span></span><br><span class="line"><span class="function"><span class="params">    storeKey = <span class="string">'store'</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="regexp">//</span> 传递给 selectorFactory 的参数</span></span></span><br><span class="line"><span class="function"><span class="params">    ...connectOptions</span></span></span><br><span class="line"><span class="function"><span class="params">  &#125; = &#123;&#125;</span></span></span><br><span class="line"><span class="function"><span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">wrapWithConnect</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> selectorFactoryOptions = &#123;</span><br><span class="line">      ...connectOptions,</span><br><span class="line">      shouldHandleStateChanges,</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Connect</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">      <span class="keyword">constructor</span>(props, context) &#123;</span><br><span class="line">        <span class="keyword">super</span>(props, context)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.version = version</span><br><span class="line">        <span class="keyword">this</span>.state = &#123;&#125;</span><br><span class="line">        <span class="keyword">this</span>.renderCount = <span class="number">0</span></span><br><span class="line">        <span class="keyword">this</span>.store = props[storeKey] || context[storeKey]</span><br><span class="line">        <span class="keyword">this</span>.propsMode = <span class="built_in">Boolean</span>(props[storeKey])</span><br><span class="line">        <span class="keyword">this</span>.setWrappedInstance = <span class="keyword">this</span>.setWrappedInstance.bind(<span class="keyword">this</span>)、</span><br><span class="line"></span><br><span class="line">        <span class="comment">// selector 与 subscription 的初始化</span></span><br><span class="line">        <span class="keyword">this</span>.initSelector()</span><br><span class="line">        <span class="keyword">this</span>.initSubscription()</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      getChildContext() &#123;</span><br><span class="line">        <span class="comment">// 如果组件从props里获得store，那么将 context 中的 subscription 传递下去</span></span><br><span class="line">        <span class="comment">// 否则就将传递此组件中的 subscription</span></span><br><span class="line">        <span class="comment">// 子组件使用祖先组件的 subscription 可以保证组件的更新顺序（父 -&gt; 子）。</span></span><br><span class="line">        <span class="comment">// 另外 将store通过props传递下去，这种场景是什么。。。</span></span><br><span class="line">        <span class="keyword">const</span> subscription = <span class="keyword">this</span>.propsMode ? <span class="literal">null</span> : <span class="keyword">this</span>.subscription</span><br><span class="line">        <span class="keyword">return</span> &#123; [subscriptionKey]: subscription || <span class="keyword">this</span>.context[subscriptionKey] &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      componentDidMount() &#123;</span><br><span class="line">        <span class="comment">// shouldHandleStateChanges === Boolean(mapStateToProps)</span></span><br><span class="line">        <span class="comment">// 如果没有 mapStateToProps 组件不需要监听store变化</span></span><br><span class="line">        <span class="keyword">if</span> (!shouldHandleStateChanges) <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 由于 componentWillMount 会在ssr中触发，而 componentDidMount、componentWillUnmount不会。</span></span><br><span class="line">        <span class="comment">// 如果将subscription放在 componentWillMount中，那么 unsubscription 将不会被触发，将会导致内存泄漏。</span></span><br><span class="line">        <span class="keyword">this</span>.subscription.trySubscribe()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 为了防止子组件在 componentWillMount 中调用dipatch 所以这里需要在重新计算一次</span></span><br><span class="line">        <span class="comment">// 因为子组件的 componentWillMount 先于组件的 componentDidMount 发生，此时还没有执行 trySubscribe</span></span><br><span class="line">        <span class="keyword">this</span>.selector.run(<span class="keyword">this</span>.props)</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.selector.shouldComponentUpdate) <span class="keyword">this</span>.forceUpdate()</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      componentWillReceiveProps(nextProps) &#123;</span><br><span class="line">        <span class="keyword">this</span>.selector.run(nextProps)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      shouldComponentUpdate() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.selector.shouldComponentUpdate</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      componentWillUnmount() &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.subscription) <span class="keyword">this</span>.subscription.tryUnsubscribe()</span><br><span class="line">        <span class="keyword">this</span>.subscription = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">this</span>.notifyNestedSubs = noop</span><br><span class="line">        <span class="keyword">this</span>.store = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">this</span>.selector.run = noop</span><br><span class="line">        <span class="keyword">this</span>.selector.shouldComponentUpdate = <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      initSelector() &#123;</span><br><span class="line">        <span class="keyword">const</span> sourceSelector = selectorFactory(<span class="keyword">this</span>.store.dispatch, selectorFactoryOptions)</span><br><span class="line">        <span class="keyword">this</span>.selector = makeSelectorStateful(sourceSelector, <span class="keyword">this</span>.store)</span><br><span class="line">        <span class="keyword">this</span>.selector.run(<span class="keyword">this</span>.props)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      initSubscription() &#123;</span><br><span class="line">        <span class="keyword">if</span> (!shouldHandleStateChanges) <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> parentSub = (<span class="keyword">this</span>.propsMode ? <span class="keyword">this</span>.props : <span class="keyword">this</span>.context)[subscriptionKey]</span><br><span class="line">        <span class="keyword">this</span>.subscription = <span class="keyword">new</span> Subscription(<span class="keyword">this</span>.store, parentSub, <span class="keyword">this</span>.onStateChange.bind(<span class="keyword">this</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里是防止组件在通知过程中卸载，此时this.subscription就为null了。这里将notifyNestedSubs拷贝一次。</span></span><br><span class="line">        <span class="comment">// 并且在componentWillUnmount 中 this.notifyNestedSubs = noop，</span></span><br><span class="line">        <span class="keyword">this</span>.notifyNestedSubs = <span class="keyword">this</span>.subscription.notifyNestedSubs.bind(<span class="keyword">this</span>.subscription)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      onStateChange() &#123;</span><br><span class="line">        <span class="keyword">this</span>.selector.run(<span class="keyword">this</span>.props)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.selector.shouldComponentUpdate) &#123;</span><br><span class="line">          <span class="comment">// 如果不需要更新则通知子组件</span></span><br><span class="line">          <span class="keyword">this</span>.notifyNestedSubs()</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">// 如果需要更新则在更新之后，再通知子组件</span></span><br><span class="line">          <span class="keyword">this</span>.componentDidUpdate = <span class="keyword">this</span>.notifyNestedSubsOnComponentDidUpdate</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 组件更新</span></span><br><span class="line">          <span class="keyword">this</span>.setState(dummyState)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      notifyNestedSubsOnComponentDidUpdate() &#123;</span><br><span class="line">        <span class="comment">// 避免重复通知</span></span><br><span class="line">        <span class="keyword">this</span>.componentDidUpdate = <span class="literal">undefined</span></span><br><span class="line">        <span class="keyword">this</span>.notifyNestedSubs()</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      isSubscribed() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Boolean</span>(<span class="keyword">this</span>.subscription) &amp;&amp; <span class="keyword">this</span>.subscription.isSubscribed()</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      render() &#123;</span><br><span class="line">        <span class="keyword">const</span> selector = <span class="keyword">this</span>.selector</span><br><span class="line">        selector.shouldComponentUpdate = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (selector.error) &#123;</span><br><span class="line">          <span class="keyword">throw</span> selector.error</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> createElement(WrappedComponent, <span class="keyword">this</span>.addExtraProps(selector.props))</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* eslint-enable react/no-deprecated */</span></span><br><span class="line"></span><br><span class="line">    Connect.WrappedComponent = WrappedComponent</span><br><span class="line">    Connect.displayName = displayName</span><br><span class="line">    Connect.childContextTypes = childContextTypes</span><br><span class="line">    Connect.contextTypes = contextTypes</span><br><span class="line">    Connect.propTypes = contextTypes</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> hoistStatics(Connect, WrappedComponent)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>over～ 是不是觉得react-redux很简单？<br>接下来我会将react技术栈中常用的库（react, react-router, redux, redux-saga, dva）源码分析一遍，喜欢的话。可以watch me！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1891,7 +1888,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
