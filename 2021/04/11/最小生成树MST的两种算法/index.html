@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="MST(minimum-spanning-tree)算法，用于计算在加权无向连通图中，生成最小权重的树。  使用邻接矩阵表示上图： 12345678var graph = [  [0, 2, 4, 0, 0, 0],  [2, 0, 2, 4, 2, 0],  [4, 2, 0, 0, 3, 0],  [0, 4, 0, 0, 3, 2],  [0, 2, 3, 3, 0, 2],  [0, 0,">
+<meta name="keywords" content="算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算最小生成树MST的两种算法">
+<meta property="og:url" content="https://github.com/OPY-bbt/2021/04/11/最小生成树MST的两种算法/index.html">
+<meta property="og:site_name" content="前路漫漫 唯风作伴">
+<meta property="og:description" content="MST(minimum-spanning-tree)算法，用于计算在加权无向连通图中，生成最小权重的树。  使用邻接矩阵表示上图： 12345678var graph = [  [0, 2, 4, 0, 0, 0],  [2, 0, 2, 4, 2, 0],  [4, 2, 0, 0, 3, 0],  [0, 4, 0, 0, 3, 2],  [0, 2, 3, 3, 0, 2],  [0, 0,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/04/11/images/mit.png">
+<meta property="og:updated_time" content="2021-05-10T08:40:02.047Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算最小生成树MST的两种算法">
+<meta name="twitter:description" content="MST(minimum-spanning-tree)算法，用于计算在加权无向连通图中，生成最小权重的树。  使用邻接矩阵表示上图： 12345678var graph = [  [0, 2, 4, 0, 0, 0],  [2, 0, 2, 4, 2, 0],  [4, 2, 0, 0, 3, 0],  [0, 4, 0, 0, 3, 2],  [0, 2, 3, 3, 0, 2],  [0, 0,">
+<meta name="twitter:image" content="https://github.com/OPY-bbt/2021/04/11/images/mit.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/OPY-bbt/2021/04/11/最小生成树MST的两种算法/"/>
+
+
+
+
+
+  <title>计算最小生成树MST的两种算法 | 前路漫漫 唯风作伴</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">前路漫漫 唯风作伴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏大地 仰望星空</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2021/04/11/最小生成树MST的两种算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="山石岩">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前路漫漫 唯风作伴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算最小生成树MST的两种算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-11T22:37:05+08:00">
+                2021-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/04/11/最小生成树MST的两种算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2021/04/11/最小生成树MST的两种算法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MST(minimum-spanning-tree)算法，用于计算在加权无向连通图中，生成最小权重的树。</p>
+<p><img src="../images/mit.png" alt="MIT"></p>
+<p>使用邻接矩阵表示上图：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> graph = [</span><br><span class="line">  [<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">  [<span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">0</span>],</span><br><span class="line">  [<span class="number">4</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>],</span><br><span class="line">  [<span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">2</span>],</span><br><span class="line">  [<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">2</span>],</span><br><span class="line">  [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>],</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>主要有两种算法：</p>
+<ul>
+<li>Prim（普里姆） 算法</li>
+<li>Kruskal（克鲁斯卡尔） 算法</li>
+</ul>
+<h3 id="Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线"><a href="#Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线" class="headerlink" title="Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线"></a>Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">prim</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> parent = [],</span><br><span class="line">    key = [],</span><br><span class="line">    visited = [],</span><br><span class="line">    length = graph.length,</span><br><span class="line">    i;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 把所有顶点 key 设置为无限大，未访问</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">    key[i] = <span class="built_in">Number</span>.MAX_SAFE_INTEGER;</span><br><span class="line">    visited[i] = <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 选择第一个 key 作为第一个顶点</span></span><br><span class="line">  key[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 第一个顶点为 MST 根结点，所以 parent 为 -1</span></span><br><span class="line">  parent[<span class="number">0</span>] = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 对所有顶点求 MST</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length - <span class="number">1</span>; i++) &#123;</span><br><span class="line">    <span class="comment">// 从未处理集合中选出最小的key</span></span><br><span class="line">    <span class="keyword">var</span> u = minKey(key, visited);</span><br><span class="line">    <span class="comment">// 设置未true，避免重复计算</span></span><br><span class="line">    visited[u] = <span class="literal">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 遍历所有点，如果得出更小的权重，则在 parent 中 保存路径</span></span><br><span class="line">    <span class="comment">// 并且更新顶点权重值 key</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> v = <span class="number">0</span>; v &lt; length; v++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (graph[u][v] &amp;&amp;</span><br><span class="line">          visited[v] === <span class="literal">false</span> &amp;&amp;</span><br><span class="line">          graph[u][v] &lt; key[v]) &#123;</span><br><span class="line">        parent[v] = u;</span><br><span class="line">        key[v] = graph[u][v];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> parent;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">minKey</span>(<span class="params">key, visited</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> min = <span class="built_in">Number</span>.MAX_SAFE_INTEGER,</span><br><span class="line">    minIndex = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> v = <span class="number">0</span>; v &lt; key.length; v++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (visited[v] == <span class="literal">false</span> &amp;&amp; key[v] &lt;= min) &#123;</span><br><span class="line">      min = key[v];</span><br><span class="line">      minIndex = v;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> minIndex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Kruskal（克鲁斯卡尔）-算法-每次从未遍历的边中选择最小权重的边"><a href="#Kruskal（克鲁斯卡尔）-算法-每次从未遍历的边中选择最小权重的边" class="headerlink" title="Kruskal（克鲁斯卡尔） 算法: 每次从未遍历的边中选择最小权重的边"></a>Kruskal（克鲁斯卡尔） 算法: 每次从未遍历的边中选择最小权重的边</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">kruskal</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> INF = <span class="built_in">Number</span>.MAX_SAFE_INTEGER;</span><br><span class="line">  <span class="keyword">var</span> length = graph.length;</span><br><span class="line">  <span class="keyword">var</span> parent = [];</span><br><span class="line">  <span class="keyword">var</span> ne = <span class="number">0</span>,</span><br><span class="line">    a,</span><br><span class="line">    b,</span><br><span class="line">    u,</span><br><span class="line">    v,</span><br><span class="line">    i,</span><br><span class="line">    j,</span><br><span class="line">    min;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 拷贝 graph 到 cost 中，方便修改和保留原始值</span></span><br><span class="line">  <span class="keyword">var</span> cost = initializeCost(graph);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 当 MST 的边数小于顶点总数 - 1 时</span></span><br><span class="line">  <span class="keyword">while</span> (ne &lt; length - <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 选出权重最小边</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>, min = INF; i &lt; length; i++) &#123;</span><br><span class="line">      <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; length; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cost[i][j] &lt; min) &#123;</span><br><span class="line">          min = cost[i][j];</span><br><span class="line">          u = i;</span><br><span class="line">          v = j;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 分别找出 u，v 的祖先节点，看是否为同一节点，如果是，则跳过</span></span><br><span class="line">    <span class="comment">// 避免环路</span></span><br><span class="line">    <span class="keyword">if</span> (union(find(u, parent), find(v, parent), parent)) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"edge"</span>, u, v, graph[u][v]);</span><br><span class="line">      ne++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 避免重复计算</span></span><br><span class="line">    cost[u][v] = cost[v][u] = INF;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> find = <span class="function"><span class="keyword">function</span> (<span class="params">i, parent</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">while</span> (parent[i] !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    i = parent[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> union = <span class="function"><span class="keyword">function</span> (<span class="params">i, j, parent</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (i != j) &#123;</span><br><span class="line">    parent[j] = i;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> initializeCost = <span class="function"><span class="keyword">function</span>(<span class="params">graph</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> cost = [];</span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = graph;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">    cost[i] = [];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; length; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (graph[i][j] === <span class="number">0</span>) &#123;</span><br><span class="line">        cost[i][j] = INF;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        cost[i][j] = graph[i][j];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> cost;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/算法/" rel="tag"># 算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/14/Core-Web-Vitals/" rel="next" title="Core Web Vitals">
+                <i class="fa fa-chevron-left"></i> Core Web Vitals
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/04/15/Chrome浏览器工作原理/" rel="prev" title="Chrome 浏览器原理">
+                Chrome 浏览器原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2021/04/11/最小生成树MST的两种算法/"
+           data-title="计算最小生成树MST的两种算法" data-url="https://github.com/OPY-bbt/2021/04/11/最小生成树MST的两种算法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4"
+               alt="山石岩" />
+          <p class="site-author-name" itemprop="name">山石岩</p>
+           
+              <p class="site-description motion-element" itemprop="description">大前端</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线"><span class="nav-number">1.</span> <span class="nav-text">Prim（普里姆）算法：每次从未遍历的节点中选择最小权重点连线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kruskal（克鲁斯卡尔）-算法-每次从未遍历的边中选择最小权重的边"><span class="nav-number">2.</span> <span class="nav-text">Kruskal（克鲁斯卡尔） 算法: 每次从未遍历的边中选择最小权重的边</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">山石岩</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"your-duoshuo-shortname"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

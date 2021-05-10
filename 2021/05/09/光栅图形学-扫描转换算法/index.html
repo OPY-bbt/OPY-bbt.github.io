@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="图形学," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="本文介绍了直线段、圆弧、多边形扫描转换算法。使用 Javascript 实现多边形扫描算法。 直线段的的扫描转换算法记得在上大学的时候，刚开始学单片机。老爸让我在液晶屏上实现画出一次方程直线的功能，当时捣鼓了一上午才搞定一条歪歪扭扭的线。这几年时间过去，又在看如何画直线，果然是轮回。主要有三种方式 数值微分(DDA)法、中点画线法、布雷森汉姆（Bresenham）算法 DDA算法求出直线斜率 k。">
+<meta name="keywords" content="图形学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="光栅图形学-扫描转换算法">
+<meta property="og:url" content="https://github.com/OPY-bbt/2021/05/09/光栅图形学-扫描转换算法/index.html">
+<meta property="og:site_name" content="前路漫漫 唯风作伴">
+<meta property="og:description" content="本文介绍了直线段、圆弧、多边形扫描转换算法。使用 Javascript 实现多边形扫描算法。 直线段的的扫描转换算法记得在上大学的时候，刚开始学单片机。老爸让我在液晶屏上实现画出一次方程直线的功能，当时捣鼓了一上午才搞定一条歪歪扭扭的线。这几年时间过去，又在看如何画直线，果然是轮回。主要有三种方式 数值微分(DDA)法、中点画线法、布雷森汉姆（Bresenham）算法 DDA算法求出直线斜率 k。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_mid.png">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_bresenham.png">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_circle.png">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_poly.png">
+<meta property="og:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_effect.png">
+<meta property="og:updated_time" content="2021-05-10T08:59:57.159Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="光栅图形学-扫描转换算法">
+<meta name="twitter:description" content="本文介绍了直线段、圆弧、多边形扫描转换算法。使用 Javascript 实现多边形扫描算法。 直线段的的扫描转换算法记得在上大学的时候，刚开始学单片机。老爸让我在液晶屏上实现画出一次方程直线的功能，当时捣鼓了一上午才搞定一条歪歪扭扭的线。这几年时间过去，又在看如何画直线，果然是轮回。主要有三种方式 数值微分(DDA)法、中点画线法、布雷森汉姆（Bresenham）算法 DDA算法求出直线斜率 k。">
+<meta name="twitter:image" content="https://github.com/OPY-bbt/2021/05/09/images/computer_graphic_mid.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/OPY-bbt/2021/05/09/光栅图形学-扫描转换算法/"/>
+
+
+
+
+
+  <title>光栅图形学-扫描转换算法 | 前路漫漫 唯风作伴</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">前路漫漫 唯风作伴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏大地 仰望星空</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2021/05/09/光栅图形学-扫描转换算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="山石岩">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前路漫漫 唯风作伴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">光栅图形学-扫描转换算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-09T22:37:05+08:00">
+                2021-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/05/09/光栅图形学-扫描转换算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2021/05/09/光栅图形学-扫描转换算法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文介绍了直线段、圆弧、多边形扫描转换算法。使用 Javascript 实现多边形扫描算法。</p>
+<h2 id="直线段的的扫描转换算法"><a href="#直线段的的扫描转换算法" class="headerlink" title="直线段的的扫描转换算法"></a>直线段的的扫描转换算法</h2><p>记得在上大学的时候，刚开始学单片机。老爸让我在液晶屏上实现画出一次方程直线的功能，当时捣鼓了一上午才搞定一条歪歪扭扭的线。这几年时间过去，又在看如何画直线，果然是轮回。<br>主要有三种方式 数值微分(DDA)法、中点画线法、布雷森汉姆（Bresenham）算法</p>
+<h4 id="DDA算法"><a href="#DDA算法" class="headerlink" title="DDA算法"></a>DDA算法</h4><p>求出直线斜率 k。当 |k| &lt;= 1 时，x每递增1时，y递增k。当 |k| &gt; 1 时，y 每增加1，x 增加 1 / k。这样才能保证点是连续的。<br>在这个算法中，y 和 k 必须用浮点数表示，而且每一步都要对 y 进行四舍五入取整，效率不高。因为是对每个像素进行处理，所以在图形学中效率非常重要，后面也会有对浮点数以及乘除的优化。<br>当 |k| &lt;= 1 时，伪代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DDALine</span><span class="params">(<span class="keyword">int</span> x0, <span class="keyword">int</span> y0, <span class="keyword">int</span> x1, <span class="keyword">int</span> y1, <span class="keyword">int</span> color)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> x;</span><br><span class="line">  <span class="keyword">float</span> dx, dy, y, k,</span><br><span class="line">  dx = x1 - x0,</span><br><span class="line">  dy = y1 - y0,</span><br><span class="line">  k = dy / dx,</span><br><span class="line">  y = y0;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (x = x0; x &lt;= x1; x++) &#123;</span><br><span class="line">    drawpixel(x, <span class="keyword">int</span>(y + <span class="number">0.5</span>), color);</span><br><span class="line">    y = y + k;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="中点画线法"><a href="#中点画线法" class="headerlink" title="中点画线法"></a>中点画线法</h4><p>通过观察下图可以看到，假如当前点为 P，则下一个像素点有两种情况，P1和P2。<br>M点为P1，P2中点，Q点为理想直线上的点。当 M 在 Q 下方，P2 应为下一个像素点，当 M 在 Q 上方，P1 应为下一个像素点。所以可以通过比较F(Mx, My) 和 0 的大小，可以确定下个像素点位置。</p>
+<p><code>d = F(M) = F(Px + 1, Py + 0.5) = a(Px + 1) + b(Py + 0.5) + c;</code></p>
+<p><img src="../images/computer_graphic_mid.png" alt="mid"></p>
+<p>对于过 （x0, y0）(x1, y1) 两点的直线L来说，采用方程 F(x, y) = ax+ by + c = 0表示。其中 a = y0 - y1, b = x1 - x0, c = x0y1 - x1y0;</p>
+<p>利用此方程可以画出直线，但是这种方式需要进行 4 个加法和两个乘法。事实上，d 是 Px, Py的线性函数，所以可以使用增量计算的方法优化。<br>若 d &gt;= 0，则取正右方像素 P1,那么判断下一个像素位置就是<code>d1 = F(Px + 2, Py + 0.5) = d + a;</code>,增量为 a.<br>若 d &lt; 0，则取右上方像素P2，那么判断下一个像素位置就是 <code>d1 = F(Px + 2, Py + 1.5) = d + a + b;</code>增量为 a + b<br>设从点（x0， y0）开始画线，d的初值为<code>d0 = F(x0 + 1, y0 + 0.5) = F(x0， y0) + a + 0.5b = a + 0.5b</code><br>由于使用的只是 d 的符号，而 d 的增量都是整数，只有初始值包含小数，所以用 2d 代替 d 来摆脱浮点运算。优化过后的伪代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> Midpoint <span class="title">Line</span><span class="params">(<span class="keyword">int</span> x0, <span class="keyword">int</span> y0, <span class="keyword">int</span> x1, <span class="keyword">int</span> y1, <span class="keyword">int</span> color)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> a, b, d1, d2, d, x, y;</span><br><span class="line">  a = y0 - y1, b = x1 - x0, d = <span class="number">2</span> * a + b;</span><br><span class="line">  d1 = <span class="number">2</span> * a, d2 = <span class="number">2</span> * (a + b);</span><br><span class="line">  x = x0, y = y0;</span><br><span class="line">  drawpixel(x, y, color;</span><br><span class="line">  <span class="keyword">while</span>(x &lt; x1) </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (d &lt; <span class="number">0</span>)</span><br><span class="line">      &#123; x++, y++, d += d2;&#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      &#123;x++, d += d1;&#125;</span><br><span class="line">    drawpixel(x, y, color);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Bresenham"><a href="#Bresenham" class="headerlink" title="Bresenham"></a>Bresenham</h4><p>类似于中点画线法，通过偏移量d与0.5的比较来确定像素点所在的位置，其中d1 = d0 + k;</p>
+<p><img src="../images/computer_graphic_bresenham.png" alt="bresenham"></p>
+<h2 id="圆弧的的扫描转换算法"><a href="#圆弧的的扫描转换算法" class="headerlink" title="圆弧的的扫描转换算法"></a>圆弧的的扫描转换算法</h2><p>圆有四条对称轴，所以已知圆弧上一点（x, y），可以得到其关于4条对称轴的其他 7 个点，这种性质被称为八对称性。因此，只要扫描转换 1/8 圆弧，就可以用八对称性求出整个圆的像素集.具体算法也是类似于中点画线法，只不过函数方程变为圆。</p>
+<p><img src="../images/computer_graphic_circle.png" alt="circle"></p>
+<h2 id="多边形的的扫描转换算法"><a href="#多边形的的扫描转换算法" class="headerlink" title="多边形的的扫描转换算法"></a>多边形的的扫描转换算法</h2><p>在计算机图形学中，多边形有顶点和点阵两种表现方式。<br>顶点表示直观，几何意义强，占内存少，易于进行几何变换。但不利于着色。<br>点阵表示丢失了许多几何信息，但便于帧缓冲器表示图形。光栅图形学的本质问题是把多边形的顶点表示转换为点阵表示，这种转换被称为多边形的扫描转换。其中有两种方法，扫描线算法和边界标志算法，下方会用 javascript 在 canvas 中实现扫描线算法。</p>
+<h4 id="扫描线算法"><a href="#扫描线算法" class="headerlink" title="扫描线算法"></a>扫描线算法</h4><p>通过计算扫描线与多边形的相交区间，再用要求的颜色显示这区间的像素，以完成填充工作。区间的端点通过计算扫描线与多边形的边界线交点获得。<br>对于一条扫描线，主要分为下面四个步骤：</p>
+<ol>
+<li>求交。计算扫描线与多边形各边的交点</li>
+<li>排序。把所有交点按 x 值的递增顺序排序</li>
+<li>配对。将1和2，3和4等等配对</li>
+<li>填色。相交区间内的像素置为多边形的颜色</li>
+</ol>
+<p><img src="../images/computer_graphic_poly.png" alt="circle"></p>
+<p>由于反复求交运算效率低下，为了优化这个问题，将引入两个概念AET和NET。<br>将与当前扫描线相交的边称为活性边(AET)。如果某边的较低端点为ymin，则改边就放在扫描线 ymin 的新边表(NET)中。边在 AET 和 NET 中存储使用单链表的形式。每个节点包含三个信息，1、存当前扫描线与边的交点坐标x值，2、从当前扫描线到下一条扫描线间x的增量 dx；3、存该边所交的最高扫描线号ymax。<br>有了NET之后，就可以通过 NET 来维护 AET，如果当前扫描线在 NET中 有值时，就加入到 AET中，每次扫描线加一，就在原来x的基础上增加dx。当扫描线号大于 ymax时，将其从AET中删除。伪代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">polyfill</span><span class="params">(polygon, color)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> color</span></span><br><span class="line">多边形 polygon</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span> (各条扫描线 i) &#123;</span><br><span class="line">    初始化新边表头指针 NET[i]</span><br><span class="line">    把 ymin = i 的边放进 NET[i]</span><br><span class="line">  &#125;</span><br><span class="line">  y = 最低扫描线号</span><br><span class="line">  初始化活性边表为空</span><br><span class="line">  <span class="keyword">for</span> (各条扫描线i) &#123;</span><br><span class="line">    把 NET[i] 中的边结点用插入排序法插入 AET, 使之按 x 坐标递增顺序排列</span><br><span class="line">    若允许多边形的边自相交，则用冒泡排序法对 AET 重新排序</span><br><span class="line">    遍历 AET， 把配对交点区间（左闭右开）上的像素（x，y），用 drawpixel(x, y, color) 改写像素颜色值</span><br><span class="line">    遍历 AET，把 ymax = i 的结点从 AET 中删除，并把 ymax &gt; i 结点的 x 值递增 dx;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 javascript 实现此算法:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">canvas</span> <span class="attr">width</span>=<span class="string">"400"</span> <span class="attr">height</span>=<span class="string">"400"</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> WIDTH = <span class="number">400</span>;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> HEIGHT = <span class="number">400</span>;</span></span><br><span class="line"><span class="javascript">    <span class="comment">// 输入三角形中的三个顶点</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> POINTS = [[<span class="number">200</span>, <span class="number">50</span>], [<span class="number">150</span>, <span class="number">300</span>], [<span class="number">300</span>, <span class="number">350</span>]];</span></span><br><span class="line"><span class="undefined">    </span></span><br><span class="line"><span class="undefined"> </span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> AET = []; <span class="comment">// 活性边</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> NET = &#123;&#125;; <span class="comment">// 新边表，这里为了方便使用数组</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> ctx = <span class="built_in">document</span>.body.querySelector(<span class="string">'canvas'</span>).getContext(<span class="string">'2d'</span>);</span></span><br><span class="line"><span class="javascript">    <span class="comment">// 将 canvas 中的坐标系与笛卡尔坐标系保持一致，方便绘制</span></span></span><br><span class="line"><span class="undefined">    ctx.translate(0, HEIGHT);</span></span><br><span class="line"><span class="undefined">    ctx.scale(1, -1);</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    POINTS.forEach(<span class="function"><span class="params">p</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">      drawPixel(p[<span class="number">0</span>], p[<span class="number">1</span>], <span class="string">'#F00'</span>, <span class="number">3</span>);</span></span><br><span class="line"><span class="undefined">    &#125;)</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 初始化 NET</span></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 如果某边的较低端点为ymin,则该边就放在扫描线ymin的新边表中。</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; POINTS.length; i++) &#123;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 由 point 和 next_point 组成的边</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> point = POINTS[i];</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> j = i === POINTS.length - <span class="number">1</span> ? <span class="number">0</span> : i + <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> next_point = POINTS[j];</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> minY_point = point[<span class="number">1</span>] &lt;= next_point[<span class="number">1</span>] ? point : next_point;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> maxY_point = point[<span class="number">1</span>] &lt;= next_point[<span class="number">1</span>] ? next_point : point;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> newNode = &#123;</span></span><br><span class="line"><span class="undefined">        x: minY_point[0],</span></span><br><span class="line"><span class="javascript">        <span class="comment">// <span class="doctag">TODO:</span> 没有考虑水平的情况</span></span></span><br><span class="line"><span class="undefined">        dx: (maxY_point[0] - minY_point[0]) / (maxY_point[1] - minY_point[1]),</span></span><br><span class="line"><span class="undefined">        ymax: maxY_point[1],</span></span><br><span class="line"><span class="javascript">        next: <span class="literal">null</span>,</span></span><br><span class="line"><span class="undefined">        points: [i, j],</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> ymin = minY_point[<span class="number">1</span>];</span></span><br><span class="line"><span class="undefined">      </span></span><br><span class="line"><span class="javascript">      <span class="comment">// 将点存在新边表中，如果新边表中已经存在值则放在链表尾部</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">if</span> (NET[ymin]) &#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> current = NET[ymin];</span></span><br><span class="line"><span class="javascript">        <span class="keyword">while</span> (current.next) &#123;</span></span><br><span class="line"><span class="undefined">          current = current.next;</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">        current.next = newNode;</span></span><br><span class="line"><span class="javascript">      &#125; <span class="keyword">else</span> &#123;</span></span><br><span class="line"><span class="undefined">        NET[ymin] = newNode;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">'NET'</span>, NET);</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 遍历所有扫描边，绘制图形</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; HEIGHT; i++) &#123;</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 假如新边表有值，将节点插入 AET 中</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">if</span> (NET[i]) &#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> current = NET[i];</span></span><br><span class="line"><span class="javascript">        <span class="keyword">while</span> (current) &#123;</span></span><br><span class="line"><span class="javascript">          <span class="comment">// NET 插入排序法 进 AET</span></span></span><br><span class="line"><span class="javascript">          <span class="keyword">let</span> j = <span class="number">0</span></span></span><br><span class="line"><span class="javascript">          <span class="keyword">for</span> (; j &lt; AET.length; j++) &#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">if</span> (AET[j].x &gt; current.x) &#123;</span></span><br><span class="line"><span class="javascript">              <span class="keyword">break</span>;</span></span><br><span class="line"><span class="undefined">            &#125;</span></span><br><span class="line"><span class="undefined">          &#125;</span></span><br><span class="line"><span class="undefined">          AET.splice(j, 0, current);</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">          current = current.next;</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 遍历 AET 表，如果扫描边等于节点 ymax 值，</span></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 则说明已经超出此线段范围，从 AET 中删除。</span></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 否则，x 值递增 dx</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; AET.length; j++) &#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">const</span> node = AET[j];</span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span> (node.ymax === i) &#123;</span></span><br><span class="line"><span class="javascript">          <span class="comment">// 删除此节点</span></span></span><br><span class="line"><span class="undefined">          AET.splice(j, 1);</span></span><br><span class="line"><span class="undefined">          j--;</span></span><br><span class="line"><span class="javascript">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node.ymax &gt;= i) &#123;</span></span><br><span class="line"><span class="undefined">          node.x = node.x + node.dx</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined">  </span></span><br><span class="line"><span class="javascript">      <span class="comment">// 将 AET 中的节点，两两配对，绘制两点之间的线段</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; AET.length; j += <span class="number">2</span>) &#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span> (AET[j] &amp;&amp; AET[j + <span class="number">1</span>]) &#123;</span></span><br><span class="line"><span class="undefined">          drawPixels(AET[j].x, AET[j + 1].x, i);</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">'AET'</span>, AET);</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">drawPixels</span>(<span class="params">x1, x2, y</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">for</span> (<span class="keyword">let</span> i = x1; i &lt; x2; i++) &#123;</span></span><br><span class="line"><span class="undefined">        drawPixel(i, y);</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">drawPixel</span>(<span class="params">x, y, color = <span class="string">'#000'</span>, size = <span class="number">1</span></span>) </span>&#123;</span></span><br><span class="line"><span class="undefined">      ctx.fillStyle = color;</span></span><br><span class="line"><span class="javascript">      ctx.fillRect(<span class="built_in">Math</span>.round(x), <span class="built_in">Math</span>.round(y), size, size);</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<p><img src="../images/computer_graphic_effect.png" alt="circle"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/图形学/" rel="tag"># 图形学</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/15/Chrome浏览器工作原理/" rel="next" title="Chrome 浏览器原理">
+                <i class="fa fa-chevron-left"></i> Chrome 浏览器原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2021/05/09/光栅图形学-扫描转换算法/"
+           data-title="光栅图形学-扫描转换算法" data-url="https://github.com/OPY-bbt/2021/05/09/光栅图形学-扫描转换算法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4"
+               alt="山石岩" />
+          <p class="site-author-name" itemprop="name">山石岩</p>
+           
+              <p class="site-description motion-element" itemprop="description">大前端</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#直线段的的扫描转换算法"><span class="nav-number">1.</span> <span class="nav-text">直线段的的扫描转换算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DDA算法"><span class="nav-number">1.0.1.</span> <span class="nav-text">DDA算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#中点画线法"><span class="nav-number">1.0.2.</span> <span class="nav-text">中点画线法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bresenham"><span class="nav-number">1.0.3.</span> <span class="nav-text">Bresenham</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#圆弧的的扫描转换算法"><span class="nav-number">2.</span> <span class="nav-text">圆弧的的扫描转换算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多边形的的扫描转换算法"><span class="nav-number">3.</span> <span class="nav-text">多边形的的扫描转换算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#扫描线算法"><span class="nav-number">3.0.1.</span> <span class="nav-text">扫描线算法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">山石岩</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"your-duoshuo-shortname"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

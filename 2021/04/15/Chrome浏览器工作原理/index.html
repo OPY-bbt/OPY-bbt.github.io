@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="web," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Part 1 浏览器架构CPU, GPU, Memory, 多进程架构, 通过 IPC(Inter Process Communication)通信。包含的几个进程及内容:  Browser process: 地址栏，书签，前进，后退，网络请求和文件 Render process: 控制所有 tab 中显示的内容 Plugin: 例如 flash GPU: 处理 GPU 任务  通过 Chrome">
+<meta name="keywords" content="web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chrome 浏览器原理">
+<meta property="og:url" content="https://github.com/OPY-bbt/2021/04/15/Chrome浏览器工作原理/index.html">
+<meta property="og:site_name" content="前路漫漫 唯风作伴">
+<meta property="og:description" content="Part 1 浏览器架构CPU, GPU, Memory, 多进程架构, 通过 IPC(Inter Process Communication)通信。包含的几个进程及内容:  Browser process: 地址栏，书签，前进，后退，网络请求和文件 Render process: 控制所有 tab 中显示的内容 Plugin: 例如 flash GPU: 处理 GPU 任务  通过 Chrome">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-05-10T08:46:19.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chrome 浏览器原理">
+<meta name="twitter:description" content="Part 1 浏览器架构CPU, GPU, Memory, 多进程架构, 通过 IPC(Inter Process Communication)通信。包含的几个进程及内容:  Browser process: 地址栏，书签，前进，后退，网络请求和文件 Render process: 控制所有 tab 中显示的内容 Plugin: 例如 flash GPU: 处理 GPU 任务  通过 Chrome">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/OPY-bbt/2021/04/15/Chrome浏览器工作原理/"/>
+
+
+
+
+
+  <title>Chrome 浏览器原理 | 前路漫漫 唯风作伴</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">前路漫漫 唯风作伴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏大地 仰望星空</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/OPY-bbt/2021/04/15/Chrome浏览器工作原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="山石岩">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前路漫漫 唯风作伴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Chrome 浏览器原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-15T22:37:05+08:00">
+                2021-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/04/15/Chrome浏览器工作原理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2021/04/15/Chrome浏览器工作原理/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Part-1-浏览器架构"><a href="#Part-1-浏览器架构" class="headerlink" title="Part 1 浏览器架构"></a>Part 1 浏览器架构</h3><p>CPU, GPU, Memory, 多进程架构, 通过 IPC(Inter Process Communication)通信。包含的几个进程及内容:</p>
+<ul>
+<li>Browser process: 地址栏，书签，前进，后退，网络请求和文件</li>
+<li>Render process: 控制所有 tab 中显示的内容</li>
+<li>Plugin: 例如 flash</li>
+<li>GPU: 处理 GPU 任务</li>
+</ul>
+<p>通过 Chrome 右上角-更多工具-任务管理器, 可以查看进程, 一般情况下，每个 Tab 页都是一个 render process，使得页面之间互不影响，并且更加安全。如果多个tab页，但网站之间是同域的，还是会共享一个 render process。</p>
+<p>Site Isolation 技术实现了即使是跨域的 iframe，也会使用不同的 render process。这意味着一个 Tab 页，可能对应多个 render process。此技术是里程碑式的，没有想象的这么简单，比如 Ctrl + F 必须在多个Render process中搜索。</p>
+<h3 id="Part-2-在导航期间发生了什么"><a href="#Part-2-在导航期间发生了什么" class="headerlink" title="Part 2 在导航期间发生了什么"></a>Part 2 在导航期间发生了什么</h3><p>导航从 Browser process开始，Browser process 中包含了 UI thread（绘制按钮和搜索框）、Network thread（请求数据）、Storage thread（文件）。</p>
+<ul>
+<li>（处理输入）当用户在地址栏输入文字时，UI thread 会解析字符串，判断是搜索文字还是URL地址。</li>
+<li>（开始导航）当用户点击 Enter 按键，UI thread 会初始化网络请求获取内容。Network thread 会进行 DNS查询、建立 TLS连接。</li>
+<li>（读响应数据）当获取到 Response body时，Network thread 会通过 Content-Type 选择合适的处理方式。如果请求是HTML file，会将数据传递给 Renderer process，如果是 zip 或者其他下载文件，会传递给下载管理器。</li>
+<li>（找到 renderer process）如果请求返回数据通过了安全检查，Network thread 会通知 UI thread，UI thread 会使用 Renderer process 渲染页面。</li>
+<li>（提交 navigation）数据会通过IPC从 Browser process 发到 Renderer process。如果 navigation 已经完成，Renderer process 会通知 Browser [Page loaded], 地址栏旁边的spinner将会消失。提交导航后，Renderer process 将会继续加载资源和渲染页面，具体细节，会在后面说到。</li>
+</ul>
+<h3 id="Part-3-渲染器进程"><a href="#Part-3-渲染器进程" class="headerlink" title="Part 3 渲染器进程"></a>Part 3 渲染器进程</h3><p>渲染器进程处理tab页中所有的事情。main thread处理大部分代码，一些web worker 和 service worker相关的代码会交给 worker thread。compositor thread 和 raster thread 负责渲染页面更有效率和流畅。</p>
+<p>renderer process 核心工作是将 HTML，CSS， JS 转变成可交互页面。</p>
+<p>main thread 解析HTML文件为 DOM 结构，HTML解析器遇到 script 标签会停止解析，直到加载，解析，执行 js 代码完成之后。因为 js 可能会导致 DOM 结构改变。</p>
+<p>得到DOM之后，main thread 解析 CSS 得到每个 DOM Node 的 computed style。</p>
+<p>得到 computed style 之后，准备生成 layout tree，获取元素的几何结构，例如元素 x，y坐标，盒尺寸等。</p>
+<p>然后是 paint 步骤，决定绘制顺序，比如 z-index。结果是生成绘制指令不是真的绘制。main thread 会遍历 layout tree 生成 paint records(类似 “background first, then text, then rectangle”.)。</p>
+<p>得到 paint 指令之后，将这些信息转变为屏幕上的像素被称为栅格化(rasterizing)。在 Chrome 早期的时候，初始化时栅格化 viewport 中的内容，当用户滚动之后，在对新内容进行栅格化。在后期版本中，又增加了一个 合成(compositing)步骤。</p>
+<p>Compositing 会将页面分为不同的层，并且对每一层进行栅格化。当有滚动、动画发生时，仅通过合成来获得新的帧。为了判断元素应该被放在哪一层里，主线程会通过遍历 layout tree 去创建 layer tree（可以通过will-change生成新的layer）。</p>
+<p>一旦 layer tree 和 paint order 准备就绪，主线程会将信息提交给 compositor thread。然后在栅格化每一层。layer 可能会是整个页面大小，所以 compositor thread 会把layer切分成瓦片(tile)。然后栅格进程对tile进行栅格化，并将结果保存在 GPU中。</p>
+<p>当 tile 被栅格化之后，compositor thread 收集 tile 信息，draw quads 和 compositor frame（draw quads 集合）。然后合成帧被提交给浏览器进程。然后被发送给GPU。合成的好处就是不需要主线程参与，就可以生成合成帧，保证动画流畅。</p>
+<h3 id="Part-4-处理用户事件输入"><a href="#Part-4-处理用户事件输入" class="headerlink" title="Part 4 处理用户事件输入"></a>Part 4 处理用户事件输入</h3><p>当用户touch事件发生时，Browser process 首先接收到，然后发送事件类型和坐标给 Renderer process 中合成线程，然后通知 main thread，其查找事件目标元素和运行事件监听器。</p>
+<p>合成线程会将页面中带有事件监听器的区域标记为 Non-Fast Scrollable Region，如果事件在这个区域发生，合成线程会发送给 main thread。如果这个区域没有时间发生，则不需要等待 main thread。所以，大量的事件代理，也会影响性能，因为这样会导致标记区域变大。为了防止这种事情发生，通过设置 passive：true(表示永远不会调用 preventDefault)，可以告诉浏览器虽然需要主线程监听，但是合成线程可以继续生成合成帧，不必等待，可以使得滚动更加顺滑。</p>
+<p>main thread 通过 x，y 坐标和查找 paint records 来确定事件目标</p>
+<p>屏幕一般刷新率为60hz，而move事件一般为 60-120hz，所以 Chrome会合并持续事件（wheel，mousewheel，mousemove，touchmove）到下一个requestAnimationFrame 之前触发，避免无效的事件触发。但是，如果你需要精确的用户事件坐标，如果绘图软件等，那么就需要使用 getCoalescedEvents。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'pointermove'</span>, event =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> events = event.getCoalescedEvents();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> event <span class="keyword">of</span> events) &#123;</span><br><span class="line">        <span class="keyword">const</span> x = event.pageX;</span><br><span class="line">        <span class="keyword">const</span> y = event.pageY;</span><br><span class="line">        <span class="comment">// draw a line using x and y coordinates.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/web/" rel="tag"># web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/11/最小生成树MST的两种算法/" rel="next" title="计算最小生成树MST的两种算法">
+                <i class="fa fa-chevron-left"></i> 计算最小生成树MST的两种算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/05/09/光栅图形学-扫描转换算法/" rel="prev" title="光栅图形学-扫描转换算法">
+                光栅图形学-扫描转换算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2021/04/15/Chrome浏览器工作原理/"
+           data-title="Chrome 浏览器原理" data-url="https://github.com/OPY-bbt/2021/04/15/Chrome浏览器工作原理/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars3.githubusercontent.com/u/16717283?s=460&v=4"
+               alt="山石岩" />
+          <p class="site-author-name" itemprop="name">山石岩</p>
+           
+              <p class="site-description motion-element" itemprop="description">大前端</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-1-浏览器架构"><span class="nav-number">1.</span> <span class="nav-text">Part 1 浏览器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-2-在导航期间发生了什么"><span class="nav-number">2.</span> <span class="nav-text">Part 2 在导航期间发生了什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-3-渲染器进程"><span class="nav-number">3.</span> <span class="nav-text">Part 3 渲染器进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-4-处理用户事件输入"><span class="nav-number">4.</span> <span class="nav-text">Part 4 处理用户事件输入</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">山石岩</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"your-duoshuo-shortname"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
